@@ -1,8 +1,11 @@
 const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
+var tasks = require('../checkpoint-backend-1/server/state').tasks;
+
+
 
 // change this to your mongodb atlas uri
-const url = '';
+const url = 'mongodb+srv://selenasolis:Ss-419057@selena-practice-s1rzj.mongodb.net/test?retryWrites=true&w=majority';
 
 // Create a new MongoClient
 const client = new MongoClient(url);
@@ -16,20 +19,19 @@ function doStuffAfterConnected(err){
       return;
     }
     console.log("Connected successfully to server");
-    const db = client.db("???");
+    const db = client.db("checkpoint1");
     insertSomething(db,()=>{
       findSomething(db,()=>{
         client.close();
       });
     });
-   
 }
 
 const findSomething = function(db,callback) {
     // Get the documents collection
-    const collection = db.collection('???');
+    const collection = db.collection('tasks');
     // Find some documents
-    let found = collection.find({});
+    let found = collection.find();
     found.toArray(function(err, docs) {
       assert.equal(err, null);
       console.log("Found the following records");
@@ -37,13 +39,12 @@ const findSomething = function(db,callback) {
       callback();
     });
   }
+
 const insertSomething = function(db,callback) {
     // Get the documents collection
-    const collection = db.collection('???');
+    const collection = db.collection('tasks');
     // Insert some documents
-    collection.insertMany([
-      {a : 1}, {a : 2}, {a : 3}
-    ], function(err, result) {
+    collection.insertMany(tasks, function(err, result) {
       console.log("Inserted documents into the collection");
       callback();
     });
